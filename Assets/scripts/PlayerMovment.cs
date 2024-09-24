@@ -2,14 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovment : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    [Header("----------Movement---------->")]
-    [SerializeField] private float moveSpeed;
+    [Header("----------Movement----------")]
+    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Transform orientation;
+    [SerializeField] private bool useArrowKeys = true;
 
-    private float horizontalInput;
-    private float verticalInput;
     private Vector3 moveDirection;
     private Rigidbody rb;
 
@@ -32,21 +31,59 @@ public class PlayerMovment : MonoBehaviour
 
     private void PlayerInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        moveDirection = Vector3.zero;
+
+        if (useArrowKeys) // Arrow keys for Player 1
+        {
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                moveDirection += orientation.forward;
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                moveDirection -= orientation.forward;
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                moveDirection -= orientation.right;
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                moveDirection += orientation.right;
+            }
+        }
+        else // WASD keys for Player 2
+        {
+            if (Input.GetKey(KeyCode.W))
+            {
+                moveDirection += orientation.forward;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                moveDirection -= orientation.forward;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                moveDirection -= orientation.right;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                moveDirection += orientation.right;
+            }
+        }
+
+        moveDirection.Normalize();
     }
 
     private void MovePlayer()
     {
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        if (horizontalInput == 0 && verticalInput == 0)
+        if (moveDirection == Vector3.zero)
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
         }
         else
         {
-            Vector3 targetVelocity = moveDirection.normalized * moveSpeed;
+            Vector3 targetVelocity = moveDirection * moveSpeed;
             rb.velocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z);
         }
     }
@@ -61,5 +98,4 @@ public class PlayerMovment : MonoBehaviour
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
         }
     }
-
 }
