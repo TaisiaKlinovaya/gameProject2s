@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    public float impulse = 500.0f;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +22,10 @@ public class Ball : MonoBehaviour
         if (collision.gameObject.tag == "Tor")
         {
             Destroy(gameObject);
+        }
+        if (collision.gameObject.tag == "Wand")
+        {
+            GetComponent<Rigidbody>().AddForce(-transform.forward * impulse);
         }
     }
 }
